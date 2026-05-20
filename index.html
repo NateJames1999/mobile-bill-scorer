@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Bill Score — Free Business Mobility Audit</title>
+<meta name="description" content="Find out if your business is overpaying for mobile. Get a free, instant grade on your current plan — rates, contract terms, data, devices and more.">
+<style>
+  :root {
+    --bg: #f8f8f6;
+    --bg2: #f0f0ed;
+    --bg3: #e8e8e4;
+    --border: #ddddd8;
+    --border2: #c8c8c2;
+    --text: #1a1a18;
+    --text2: #555550;
+    --text3: #888882;
+    --blue: #0C447C;
+    --blue-light: #e8f0f8;
+    --green: #0F6E56;
+    --amber: #BA7517;
+    --orange: #D85A30;
+    --red: #A32D2D;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .page-header { background: var(--text); color: #fff; padding: 1.5rem 1.25rem 1.25rem; text-align: center; }
+  .page-header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .page-header p { font-size: 14px; color: rgba(255,255,255,0.6); max-width: 480px; margin: 0 auto; }
+
+  .container { max-width: 740px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+
+  .step { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+  .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+  .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--text); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .step-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .step-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .optional-tag { font-size: 10px; color: var(--text3); background: var(--bg2); padding: 1px 7px; border-radius: 99px; margin-left: 5px; font-weight: 400; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .field-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media(max-width:560px){ .field-row, .field-row.three { grid-template-columns: 1fr; } }
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  label { font-size: 12px; color: var(--text2); font-weight: 500; line-height: 1.4; }
+  .hint { font-size: 11px; color: var(--text3); margin-top: 2px; font-style: italic; line-height: 1.4; }
+  input, select, textarea { width: 100%; font-size: 14px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; outline: none; transition: border-color 0.15s; font-family: inherit; }
+  input:focus, select:focus, textarea:focus { border-color: var(--blue); background: #fff; }
+  textarea { resize: vertical; min-height: 64px; }
+
+  .section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+  .pill-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pill { font-size: 12px; padding: 5px 14px; border-radius: 99px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .pill:hover { border-color: var(--blue); color: var(--blue); }
+  .pill.sel { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 500; }
+
+  .etf-helper { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 8px; }
+  .etf-helper-title { font-size: 11px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .etf-helper-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  @media(max-width:560px){ .etf-helper-row { grid-template-columns: 1fr; } }
+  .etf-result { font-size: 13px; color: var(--text); padding-top: 8px; border-top: 1px solid var(--border); }
+  .etf-result strong { color: var(--blue); }
+  .etf-formula { font-size: 11px; color: var(--text3); margin-top: 3px; font-style: italic; }
+
+  .info-box { background: var(--blue-light); border-left: 3px solid var(--blue); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; color: var(--text2); line-height: 1.55; }
+  .info-box strong { color: var(--text); }
+  .warning-box { background: #fff3e0; border-left: 3px solid var(--orange); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 10px 12px; font-size: 13px; color: #7a3010; line-height: 1.55; display: none; margin-top: 10px; }
+
+  /* RESULTS */
+  .score-panel { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+  .score-top { display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .score-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; border: 3px solid #ccc; transition: border-color 0.3s; }
+  .score-num { font-size: 28px; font-weight: 700; line-height: 1; }
+  .score-letter { font-size: 17px; font-weight: 600; line-height: 1; margin-top: 2px; }
+  .score-meta { flex: 1; min-width: 180px; }
+  .score-biz { font-size: 16px; font-weight: 600; color: var(--text); }
+  .score-desc { font-size: 13px; color: var(--text2); margin-top: 5px; line-height: 1.55; }
+  .conf-wrap { margin-top: 10px; }
+  .conf-head { display: flex; justify-content: space-between; margin-bottom: 3px; }
+  .conf-head span { font-size: 11px; color: var(--text3); }
+  .conf-bar-bg { height: 5px; background: var(--bg2); border-radius: 99px; }
+  .conf-bar { height: 5px; border-radius: 99px; background: var(--blue); transition: width 0.4s; }
+  .conf-note { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  .cat-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .cat-row:last-child { border-bottom: none; }
+  .cat-name { flex: 1; color: var(--text); }
+  .cat-detail { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .cat-bar-bg { width: 80px; height: 5px; background: var(--bg2); border-radius: 99px; flex-shrink: 0; }
+  .cat-bar-fill { height: 5px; border-radius: 99px; }
+  .cat-pts { font-size: 12px; color: var(--text3); min-width: 52px; text-align: right; }
+  .cat-grade { font-size: 12px; font-weight: 600; min-width: 20px; text-align: right; }
+  .skipped { color: var(--text3); font-style: italic; }
+
+  .finding-row { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; align-items: flex-start; line-height: 1.5; }
+  .finding-row:last-child { border-bottom: none; }
+  .finding-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .next-panel { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+  .carrier-card { background: var(--bg2); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 8px; }
+  .carrier-card-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .carrier-card-info { font-size: 12px; color: var(--text2); line-height: 1.7; }
+  .carrier-card-info a { color: var(--blue); text-decoration: none; }
+  .carrier-card-info a:hover { text-decoration: underline; }
+
+  .btn { font-size: 13px; padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: transparent; color: var(--text); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .btn:hover { background: var(--bg2); }
+  .btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #0a3868; }
+
+  .page-footer { text-align: center; padding: 2rem 1rem; font-size: 12px; color: var(--text3); border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>📋 Mobile Bill Score</h1>
+  <p>Find out if your business is overpaying for mobile. Free, instant, no obligation.</p>
+</div>
+
+<div class="container">
+
+<!-- 1: Business Info -->
+<div class="step">
+  <div class="step-header"><div class="step-num">1</div><div><div class="step-title">Business info</div><div class="step-sub">Your contact details for this audit</div></div></div>
+  <div class="field-row">
+    <div class="field-group"><label>Business name</label><input type="text" id="biz-name" placeholder="ACME Inc." oninput="calc()"></div>
+    <div class="field-group"><label>Contact name</label><input type="text" id="contact-name" placeholder="Jane Smith"></div>
+  </div>
+  <div class="field-row">
+    <div class="field-group"><label>Email <span class="optional-tag">optional</span></label><input type="email" id="contact-email" placeholder="jane@acme.com"></div>
+    <div class="field-group"><label>Phone <span class="optional-tag">optional</span></label><input type="tel" id="contact-phone" placeholder="604-555-0100"></div>
+  </div>
+  <div class="field-row">
+    <div class="field-group"><label>Current carrier</label>
+      <select id="carrier" onchange="calc()">
+        <option value="">Select carrier</option>
+        <option>Rogers</option><option>Bell</option><option>Fido Business</option><option>Koodo Business</option><option>Telus</option><option>Videotron</option><option>Shaw Mobile</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field-group"><label>Industry <span class="optional-tag">optional</span></label>
+      <select id="industry">
+        <option value="">Select industry</option>
+        <option>Construction / Trades</option><option>Real Estate</option><option>Property Management</option><option>Transportation / Logistics</option><option>Healthcare</option><option>Professional Services</option><option>Retail</option><option>Hospitality</option><option>Technology</option><option>Other</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- 2: Plan Details -->
+<div class="step">
+  <div class="step-header"><div class="step-num">2</div><div><div class="step-title">Plan details</div><div class="step-sub">Core inputs — fill what you know, skip what you don't</div></div></div>
+  <div class="section-label">Lines & pricing</div>
+  <div class="field-row three">
+    <div class="field-group"><label>Total lines</label><input type="number" id="lines" placeholder="e.g. 30" min="1" oninput="calc()"></div>
+    <div class="field-group"><label>Monthly rate per line ($)</label><input type="number" id="rate" placeholder="e.g. 50" min="0" oninput="calc()"></div>
+    <div class="field-group"><label>Monthly credits per line ($) <span class="optional-tag">optional</span></label><input type="number" id="credits" placeholder="e.g. 4" min="0" oninput="calc()"></div>
+  </div>
+  <div class="section-label">Coverage tier</div>
+  <div class="pill-row">
+    <button class="pill sel" onclick="selPill('tier',this,'canada')">Canada-wide</button>
+    <button class="pill" onclick="selPill('tier',this,'can-us')">Can-US</button>
+    <button class="pill" onclick="selPill('tier',this,'can-us-mex')">Can-US-Mex</button>
+    <button class="pill" onclick="selPill('tier',this,'global')">Global</button>
+    <button class="pill" onclick="selPill('tier',this,'mixed')">Mixed</button>
+  </div>
+  <div class="section-label">Deal type</div>
+  <div class="pill-row">
+    <button class="pill sel" onclick="selPill('deal',this,'byod')">BYOD</button>
+    <button class="pill" onclick="selPill('deal',this,'mtm')">Month-to-month</button>
+    <button class="pill" onclick="selPill('deal',this,'2yr')">2-year</button>
+    <button class="pill" onclick="selPill('deal',this,'3yr')">3-year</button>
+  </div>
+  <div class="divider"></div>
+  <div class="section-label">Data plan <span class="optional-tag">optional — improves score accuracy</span></div>
+  <div class="field-row">
+    <div class="field-group"><label>Data per line (GB)</label><input type="number" id="data-gb" placeholder="e.g. 20" min="0" oninput="calc()"></div>
+    <div class="field-group"><label>Total overages on bill ($)</label><input type="number" id="overages" placeholder="e.g. 0" min="0" oninput="calc()"></div>
+  </div>
+  <div class="section-label">Data structure</div>
+  <div class="pill-row">
+    <button class="pill" onclick="selPill('data',this,'shared')">Shareable / pooled</button>
+    <button class="pill" onclick="selPill('data',this,'individual')">Individual per line</button>
+    <button class="pill sel" onclick="selPill('data',this,'unknown')">Not sure</button>
+  </div>
+</div>
+
+<!-- 3: Contract -->
+<div class="step">
+  <div class="step-header"><div class="step-num">3</div><div><div class="step-title">Contract <span class="optional-tag">optional — improves score accuracy</span></div><div class="step-sub">Term details and remaining commitment</div></div></div>
+  <div class="field-row three">
+    <div class="field-group"><label>Contract start date</label><input type="month" id="contract-start" oninput="calcRemaining()"></div>
+    <div class="field-group"><label>Contract length</label>
+      <select id="contract-len" onchange="calcRemaining()">
+        <option value="">Select</option><option value="12">1 year</option><option value="24">2 years</option><option value="36">3 years</option><option value="0">Month-to-month</option>
+      </select>
+    </div>
+    <div class="field-group"><label>Months remaining (auto-calculated)</label><input type="number" id="months-left" placeholder="Auto-calculated" min="0" oninput="calc()"></div>
+  </div>
+  <div class="field-row">
+    <div class="field-group">
+      <label>Early Transfer / Cancellation Fees — total across all lines ($) <span class="optional-tag">optional</span></label>
+      <input type="number" id="etf" placeholder="e.g. 616" min="0" oninput="calc()">
+      <div class="etf-helper">
+        <div class="etf-helper-title">ETF estimator — don't know your total? Calculate it here</div>
+        <div class="etf-helper-row">
+          <div class="field-group">
+            <label>Monthly plan discount per line ($)</label>
+            <div class="hint">The recurring discount applied to your base rate — e.g. a $65 plan billed at $46 has a $19/mo plan discount</div>
+            <input type="number" id="etf-credits" placeholder="e.g. 19" min="0" oninput="calcETF()">
+          </div>
+          <div class="field-group"><label>Contract length (months)</label><input type="number" id="etf-len" placeholder="e.g. 36" min="1" oninput="calcETF()"></div>
+          <div class="field-group"><label>Months remaining</label><input type="number" id="etf-rem" placeholder="e.g. 6" min="0" oninput="calcETF()"></div>
+        </div>
+        <div class="etf-result" id="etf-result" style="display:none;">
+          Per line: <strong id="etf-per-line">--</strong> &nbsp;·&nbsp; Total across <strong id="etf-line-count">--</strong> lines: <strong id="etf-total">--</strong>
+          <div class="etf-formula">Formula: monthly plan discount × months remaining = ETF per line</div>
+        </div>
+      </div>
+    </div>
+    <div class="field-group"><label>Orphaned lines on separate contracts</label>
+      <select id="orphans" onchange="calc()">
+        <option value="0">None</option><option value="1">1 line</option><option value="2">2–3 lines</option><option value="3">4+ lines</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- 4: Devices -->
+<div class="step">
+  <div class="step-header"><div class="step-num">4</div><div><div class="step-title">Devices <span class="optional-tag">optional — improves score accuracy</span></div><div class="step-sub">Only scored on lines that have subsidized devices</div></div></div>
+  <div class="field-row three">
+    <div class="field-group"><label>Lines with subsidized devices</label><input type="number" id="dev-lines" placeholder="e.g. 4" min="0" oninput="calc()"></div>
+    <div class="field-group"><label>Device base price ($)</label><input type="number" id="dev-price" placeholder="e.g. 1300" min="0" oninput="calc()"></div>
+    <div class="field-group"><label>Subsidy per device ($)</label><input type="number" id="dev-subsidy" placeholder="e.g. 300" min="0" oninput="calc()"></div>
+  </div>
+  <div style="font-size:12px;color:var(--text3);">$300+ subsidy = strong &nbsp;·&nbsp; $200–$299 = fair &nbsp;·&nbsp; under $200 = room to improve</div>
+</div>
+
+<!-- 5: Support -->
+<div class="step">
+  <div class="step-header"><div class="step-num">5</div><div><div class="step-title">Support <span class="optional-tag">optional — improves score accuracy</span></div><div class="step-sub">How you interact with your carrier today</div></div></div>
+  <div class="section-label">What best describes your current support arrangement?</div>
+  <div class="pill-row">
+    <button class="pill sel" onclick="selPill('support',this,'unknown')">Not sure</button>
+    <button class="pill" onclick="selPill('support',this,'proactive')">Proactive dedicated rep</button>
+    <button class="pill" onclick="selPill('support',this,'named')">Named rep, same-day response</button>
+    <button class="pill" onclick="selPill('support',this,'biz-line')">Business support line</button>
+    <button class="pill" onclick="selPill('support',this,'1800')">1-800 consumer line only</button>
+  </div>
+</div>
+
+<!-- 6: Roaming -->
+<div class="step">
+  <div class="step-header"><div class="step-num">6</div><div><div class="step-title">Roaming <span class="optional-tag">optional — can affect your grade</span></div><div class="step-sub">Travel patterns and international charges</div></div></div>
+  <div class="info-box">
+    <strong>How roaming affects your score:</strong> If your team incurs more than $32 in roaming charges over 6 months and travels frequently, your overall grade will be adjusted downward — as your current plan may not be optimized for your travel needs.
+  </div>
+  <div class="section-label">How often does your team travel outside Canada?</div>
+  <div class="pill-row">
+    <button class="pill sel" onclick="selPill('roam-freq',this,'never')">Never / rarely</button>
+    <button class="pill" onclick="selPill('roam-freq',this,'occasional')">Occasionally (few times/year)</button>
+    <button class="pill" onclick="selPill('roam-freq',this,'regular')">Regularly (monthly)</button>
+    <button class="pill" onclick="selPill('roam-freq',this,'frequent')">Frequently (weekly+)</button>
+  </div>
+  <div class="section-label">Primary travel destinations <span class="optional-tag">select all that apply</span></div>
+  <div class="pill-row" id="dest-pills">
+    <button class="pill" onclick="toggleDest(this)">US only</button>
+    <button class="pill" onclick="toggleDest(this)">US & Mexico</button>
+    <button class="pill" onclick="toggleDest(this)">Europe / UK</button>
+    <button class="pill" onclick="toggleDest(this)">Asia-Pacific</button>
+    <button class="pill" onclick="toggleDest(this)">Latin America</button>
+    <button class="pill" onclick="toggleDest(this)">Multiple regions</button>
+  </div>
+  <div class="field-row three">
+    <div class="field-group"><label>Roaming charges — last 6 months ($)</label><input type="number" id="roam-charges" placeholder="e.g. 85" min="0" oninput="calc()"></div>
+    <div class="field-group"><label>Staff who travel regularly (#)</label><input type="number" id="roam-staff" placeholder="e.g. 3" min="0" oninput="calc()"></div>
+    <div class="field-group"><label>Travel pattern</label>
+      <select id="roam-pattern" onchange="calc()">
+        <option value="">Select</option><option value="scheduled">Scheduled / predictable</option><option value="adhoc">Ad hoc / spontaneous</option><option value="both">Mix of both</option>
+      </select>
+    </div>
+  </div>
+  <div class="section-label">Travel Pass access</div>
+  <div class="pill-row">
+    <button class="pill sel" onclick="selPill('travelpass',this,'unknown')">I don't know</button>
+    <button class="pill" onclick="selPill('travelpass',this,'yes')">Yes, we have Travel Pass</button>
+    <button class="pill" onclick="selPill('travelpass',this,'no')">No Travel Pass</button>
+  </div>
+  <div class="section-label">Existing roaming add-ons</div>
+  <div class="pill-row">
+    <button class="pill sel" onclick="selPill('roam-addon',this,'none')">None / not sure</button>
+    <button class="pill" onclick="selPill('roam-addon',this,'us')">US roaming add-on</button>
+    <button class="pill" onclick="selPill('roam-addon',this,'intl')">International add-on</button>
+    <button class="pill" onclick="selPill('roam-addon',this,'full')">Full travel package</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="result-panel" style="display:none;">
+
+  <div class="score-panel">
+    <div class="score-top">
+      <div class="score-circle" id="sc-circle">
+        <span class="score-num" id="sc-num">--</span>
+        <span class="score-letter" id="sc-letter">-</span>
+      </div>
+      <div class="score-meta">
+        <div class="score-biz" id="sc-biz">--</div>
+        <div class="score-desc" id="sc-desc">--</div>
+        <div id="roam-badge" class="warning-box">⚠ Grade adjusted — roaming charges exceed the threshold for your travel frequency. Your current plan may not be optimized for travel.</div>
+        <div class="conf-wrap">
+          <div class="conf-head"><span>Confidence</span><span id="conf-pct">0%</span></div>
+          <div class="conf-bar-bg"><div class="conf-bar" id="conf-bar" style="width:0%"></div></div>
+          <div class="conf-note" id="conf-note">Fill more sections to increase confidence</div>
+        </div>
+      </div>
+    </div>
+    <div class="section-label" style="margin-bottom:8px;">Category breakdown</div>
+    <div id="cat-breakdown"></div>
+  </div>
+
+  <div class="score-panel" id="findings-panel" style="display:none;">
+    <div class="section-label" style="margin-bottom:8px;">Key findings</div>
+    <div id="findings-list"></div>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div class="next-panel">
+    <div class="section-label" style="margin-bottom:12px;">Next steps</div>
+    <div class="info-box" style="margin-bottom:14px;">
+      <strong>A note on negotiating vs. going to market:</strong> In the Canadian telecom industry, carriers are generally structured to retain customers at existing rates rather than proactively offer better ones. In most cases, <strong>businesses achieve significantly better outcomes by going to market</strong> — getting competing quotes — than by negotiating directly with their current provider. A competing offer is almost always your most effective leverage in any re-rate conversation.
+    </div>
+    <div class="section-label">Contact your current carrier</div>
+    <div id="carrier-contacts"></div>
+
+    <div class="divider"></div>
+
+    <div class="section-label" style="margin-top:14px;">Go to market <span class="optional-tag">optional</span></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.55;">If you'd like to be contacted by a representative from another carrier for a no-obligation quote, fill in your preferences below.</p>
+    <div class="field-row">
+      <div class="field-group"><label>Preferred contact method</label>
+        <select id="gtm-method"><option value="">Select</option><option>Phone call</option><option>Email</option><option>Text message</option><option>Any</option></select>
+      </div>
+      <div class="field-group"><label>Best time to reach you</label>
+        <select id="gtm-time"><option value="">Select</option><option>Morning (8am–12pm)</option><option>Afternoon (12pm–5pm)</option><option>Evening (5pm–7pm)</option><option>Anytime</option></select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group"><label>Lines you'd consider moving</label><input type="number" id="gtm-lines" placeholder="e.g. 30" min="1"></div>
+      <div class="field-group"><label>Quote type</label>
+        <select id="gtm-quote"><option value="">Select</option><option>Full quote with pricing</option><option>General info only</option><option>Coverage check first</option></select>
+      </div>
+    </div>
+    <div class="field-group" style="margin-bottom:12px;">
+      <label>Carriers you'd like to hear from <span class="optional-tag">select all that apply</span></label>
+      <div class="pill-row" style="margin-top:6px;margin-bottom:0;" id="carrier-pills">
+        <button class="pill" onclick="toggleCarrier(this)">TELUS</button>
+        <button class="pill" onclick="toggleCarrier(this)">Rogers</button>
+        <button class="pill" onclick="toggleCarrier(this)">Bell</button>
+        <button class="pill" onclick="toggleCarrier(this)">Videotron</button>
+        <button class="pill" onclick="toggleCarrier(this)">Shaw Mobile</button>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Anything else you'd like us to know <span class="optional-tag">optional</span></label>
+      <textarea id="gtm-notes" placeholder="e.g. We need strong coverage in Fort McMurray and Northern BC, and have staff travelling to the US monthly..."></textarea>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn btn-primary" onclick="submitGTM()">Submit — get contacted by selected carriers</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-footer">Mobile Bill Score &nbsp;·&nbsp; Free business mobility audit &nbsp;·&nbsp; Results are estimates based on current Canadian market benchmarks</div>
+
+</div><!-- end container -->
+
+<script>
+var state={tier:'canada',deal:'byod',data:'unknown',support:'unknown','roam-freq':'never',travelpass:'unknown','roam-addon':'none'};
+var roamDests=[];
+var gtmCarriers=[];
+
+function selPill(key,el,val){
+  el.parentElement.querySelectorAll('.pill').forEach(function(p){p.classList.remove('sel');});
+  el.classList.add('sel');state[key]=val;calc();
+}
+function toggleDest(el){
+  el.classList.toggle('sel');
+  roamDests=Array.from(document.getElementById('dest-pills').querySelectorAll('.pill.sel')).map(function(p){return p.textContent.trim();});
+  calc();
+}
+function toggleCarrier(el){el.classList.toggle('sel');}
+
+function calcRemaining(){
+  var start=document.getElementById('contract-start').value;
+  var len=document.getElementById('contract-len').value;
+  if(start&&len&&len!=='0'){
+    var s=new Date(start+'-01');
+    var rem=Math.max(0,Math.round((s.getTime()+(parseInt(len)*30.44*24*3600*1000)-Date.now())/(30.44*24*3600*1000)));
+    document.getElementById('months-left').value=rem;
+    document.getElementById('etf-rem').value=rem;
+    document.getElementById('etf-len').value=len;
+  }
+  calc();calcETF();
+}
+
+function calcETF(){
+  var c=parseFloat(document.getElementById('etf-credits').value);
+  var r=parseFloat(document.getElementById('etf-rem').value);
+  var lines=parseFloat(document.getElementById('lines').value)||0;
+  var res=document.getElementById('etf-result');
+  if(!isNaN(c)&&!isNaN(r)){
+    var perLine=Math.round(c*r);
+    var total=Math.round(perLine*(lines||1));
+    res.style.display='block';
+    document.getElementById('etf-per-line').textContent='$'+perLine;
+    document.getElementById('etf-line-count').textContent=Math.round(lines||1);
+    document.getElementById('etf-total').textContent='$'+total.toLocaleString();
+    if(!document.getElementById('etf').value){document.getElementById('etf').value=total;calc();}
+  } else res.style.display='none';
+}
+
+function gradeColor(g){return g==='A'?'#0F6E56':g==='B'?'#185FA5':g==='C'?'#BA7517':g==='D'?'#D85A30':'#A32D2D';}
+function letterGrade(s,m){var p=s/m;return p>=0.88?'A':p>=0.70?'B':p>=0.52?'C':p>=0.35?'D':'F';}
+function scoreToLetter(s){return s>=80?'A':s>=65?'B':s>=50?'C':s>=35?'D':'F';}
+function downgradeLetter(l){return l==='A'?'B':l==='B'?'C':l==='C'?'D':'F';}
+
+function roamPenaltyApplies(charges,freq){
+  if(isNaN(charges)||charges<=0||freq==='never')return false;
+  if(freq==='occasional')return charges>64;
+  if(freq==='regular')return charges>32;
+  if(freq==='frequent')return charges>16;
+  return false;
+}
+
+function carrierContacts(carrier){
+  var map={
+    'Rogers':{biz:'Rogers Business: 1-866-727-2141',web:'rogers.com/business',note:'Ask for the Business Retention team for re-rate requests.'},
+    'Bell':{biz:'Bell Business: 1-800-667-0123',web:'bell.ca/business',note:'Request the Business Client Care team. Have your account number ready.'},
+    'Fido Business':{biz:'Fido Business: 1-888-481-3436',web:'fido.ca/business',note:'Fido Business is managed through Rogers Business for larger accounts.'},
+    'Koodo Business':{biz:'Koodo Business: 1-866-995-6636',web:'koodomobile.com/business',note:'Koodo Business accounts are handled through TELUS Business channels for re-rates.'},
+    'Telus':{biz:'TELUS Business: 1-866-771-9666',web:'telus.com/business',note:'Ask for your dedicated SMB Account Manager for re-rate discussions.'},
+    'Videotron':{biz:'Videotron Business: 1-888-433-6876',web:'videotron.com/business',note:'Available primarily in Quebec markets.'},
+    'Shaw Mobile':{biz:'Shaw Business: 1-877-742-9249',web:'shaw.ca/business',note:'Shaw Mobile is part of the Rogers group following the 2023 merger.'}
+  };
+  return map[carrier]||{biz:'Contact your carrier\'s business support line',web:'',note:'Ask specifically for the Business Retention or Account Management team.'};
+}
+
+function calc(){
+  var bizName=document.getElementById('biz-name').value||'Your account';
+  var lines=parseFloat(document.getElementById('lines').value)||0;
+  var rate=parseFloat(document.getElementById('rate').value)||0;
+  var credits=parseFloat(document.getElementById('credits').value)||0;
+  var eff=rate-credits;
+  var dataGb=parseFloat(document.getElementById('data-gb').value);
+  var overages=parseFloat(document.getElementById('overages').value);
+  var monthsLeft=parseFloat(document.getElementById('months-left').value);
+  var etf=parseFloat(document.getElementById('etf').value);
+  var orphans=parseInt(document.getElementById('orphans').value)||0;
+  var devLines=parseFloat(document.getElementById('dev-lines').value)||0;
+  var devSubsidy=parseFloat(document.getElementById('dev-subsidy').value)||0;
+  var roamCharges=parseFloat(document.getElementById('roam-charges').value);
+  var roamFreq=state['roam-freq'];
+
+  if(!lines||!rate){document.getElementById('result-panel').style.display='none';return;}
+  document.getElementById('result-panel').style.display='block';
+
+  var bms={canada:{byod:35,mtm:35,'2yr':35,'3yr-u40':23,'3yr-o40':18},'can-us':{byod:40,mtm:40,'2yr':40,'3yr-u40':30,'3yr-o40':25},'can-us-mex':{byod:50,mtm:50,'2yr':50,'3yr-u40':35,'3yr-o40':30},global:{byod:55,mtm:55,'2yr':55,'3yr-u40':55,'3yr-o40':55}};
+  function getBM(){var t=state.tier==='mixed'?'canada':state.tier;var b=bms[t]||bms.canada;return state.deal==='3yr'?(lines>=40?b['3yr-o40']:b['3yr-u40']):(b[state.deal]||b.byod);}
+  var bm=getBM();var overBm=eff-bm;
+
+  var cats=[];var confPoints=0;var confMax=0;
+
+  confMax+=25;confPoints+=25;
+  var rScore=overBm<=0?Math.round(22+Math.min(3,(-overBm/bm)*15)):overBm<10?Math.round(17+(1-(overBm/10))*5):overBm<20?Math.round(12+(1-((overBm-10)/10))*5):overBm<30?Math.round(7+(1-((overBm-20)/10))*5):Math.max(0,Math.round(6-(overBm-30)));
+  rScore=Math.max(0,Math.min(25,rScore));
+  cats.push({name:'Rate per line',score:rScore,max:25,skipped:false,detail:'$'+eff.toFixed(0)+'/line vs $'+bm+' benchmark'});
+
+  confMax+=20;
+  var cScore=null,cSkipped=true;
+  if(!isNaN(monthsLeft)||!isNaN(etf)||orphans){
+    cSkipped=false;confPoints+=20;
+    var c1=isNaN(monthsLeft)?3:monthsLeft<=3?5:monthsLeft<=6?4:monthsLeft<=12?3:monthsLeft<=18?2:monthsLeft<=24?1:0;
+    c1=Math.max(0,c1-orphans);
+    var c2=isNaN(etf)?3:etf<100?5:etf<200?4:etf<500?3:etf<1000?2:etf<2500?1:0;
+    var c3=orphans===0?5:orphans===1?3:orphans===2?2:1;
+    var c4=state.deal==='3yr'?1:state.deal==='2yr'?3:5;
+    cScore=Math.max(0,Math.min(20,c1+c2+c3+c4));
+  }
+  cats.push({name:'Contract terms',score:cScore,max:20,skipped:cSkipped,detail:cSkipped?'':((isNaN(monthsLeft)?'?':Math.round(monthsLeft))+' months left'+(isNaN(etf)?'':' · $'+Math.round(etf)+' ETF'))});
+
+  confMax+=20;
+  var dScore=null,dSkipped=true;
+  if(!isNaN(dataGb)||!isNaN(overages)||state.data!=='unknown'){
+    dSkipped=false;confPoints+=20;
+    var base=state.data==='shared'?18:state.data==='individual'?12:14;
+    if(!isNaN(overages)){if(overages===0)base=Math.min(20,base+2);else if(overages<50)base=Math.min(base,13);else if(overages<150)base=Math.min(base,9);else base=Math.min(base,5);}
+    dScore=Math.max(0,Math.min(20,base));
+  }
+  cats.push({name:'Data efficiency',score:dScore,max:20,skipped:dSkipped,detail:dSkipped?'':(isNaN(dataGb)?'':dataGb+'GB/line')+(state.data!=='unknown'?' · '+(state.data==='shared'?'pooled':'individual'):'')+(isNaN(overages)?'':' · $'+Math.round(overages)+' overages')});
+
+  confMax+=15;
+  var dvScore=null,dvSkipped=true;
+  if(devLines>0&&devSubsidy>0){dvSkipped=false;confPoints+=15;dvScore=devSubsidy>=300?13:devSubsidy>=200?10:7;}
+  cats.push({name:'Device value',score:dvScore,max:15,skipped:dvSkipped,detail:dvSkipped?'':'$'+Math.round(devSubsidy)+' subsidy on '+Math.round(devLines)+' lines'});
+
+  confMax+=10;
+  var spScore=null,spSkipped=state.support==='unknown';
+  if(!spSkipped){confPoints+=10;spScore=state.support==='proactive'?10:state.support==='named'?8:state.support==='biz-line'?5:3;}
+  cats.push({name:'Support structure',score:spScore,max:10,skipped:spSkipped,detail:spSkipped?'':state.support});
+
+  var totalScore=0,totalMax=0;
+  cats.forEach(function(c){if(!c.skipped){totalScore+=c.score;totalMax+=c.max;}});
+  var scaledScore=totalMax>0?Math.round((totalScore/totalMax)*100):0;
+  var conf=Math.round((confPoints/confMax)*100);
+  var roamPenalty=roamPenaltyApplies(roamCharges,roamFreq);
+  var baseLetter=scoreToLetter(scaledScore);
+  var finalLetter=roamPenalty?downgradeLetter(baseLetter):baseLetter;
+
+  document.getElementById('roam-badge').style.display=roamPenalty?'block':'none';
+
+  var descs={
+    'A':'Your plan is competitive. No immediate action needed — but reviewing at your next renewal will ensure rates have kept pace with the market.',
+    'B':'Your plan is reasonable but there\'s room to do better. We\'d recommend going back to your carrier to negotiate, or comparing what\'s available before your next renewal.',
+    'C':'Your plan is below current market rates. You\'re likely overpaying — now is a good time to explore your options and compare alternatives.',
+    'D':'Your plan is significantly below market. You have a strong case to go to market for better terms. We recommend taking action before your next auto-renewal.',
+    'F':'Your plan is well below market value. You are likely paying materially more than comparable businesses for the same or lesser service. We strongly recommend exploring alternatives as soon as possible.'
+  };
+
+  var color=gradeColor(finalLetter);
+  document.getElementById('sc-circle').style.borderColor=color;
+  document.getElementById('sc-num').style.color=color;document.getElementById('sc-num').textContent=scaledScore;
+  document.getElementById('sc-letter').style.color=color;document.getElementById('sc-letter').textContent=finalLetter;
+  document.getElementById('sc-biz').textContent=bizName;
+  document.getElementById('sc-desc').textContent=descs[finalLetter];
+  document.getElementById('conf-pct').textContent=conf+'%';
+  document.getElementById('conf-bar').style.width=conf+'%';
+  document.getElementById('conf-note').textContent=conf<40?'Basic estimate — fill contract, data and support sections to sharpen the score':conf<70?'Moderate confidence — add more detail for a more accurate result':'High confidence score';
+
+  var html='';
+  cats.forEach(function(c){
+    var g=c.skipped?'-':letterGrade(c.score,c.max);
+    var gc=c.skipped?'#aaa':gradeColor(g);
+    var pct=c.skipped?0:Math.round((c.score/c.max)*100);
+    html+='<div class="cat-row"><div><div class="cat-name">'+c.name+'</div><div class="cat-detail">'+c.detail+'</div></div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:'+pct+'%;background:'+gc+';"></div></div><div class="cat-pts">'+(c.skipped?'<span class="skipped">skipped</span>':c.score+'/'+c.max)+'</div><div class="cat-grade" style="color:'+gc+';">'+g+'</div></div>';
+  });
+  document.getElementById('cat-breakdown').innerHTML=html;
+
+  var findings=[];
+  if(overBm>10)findings.push({color:'#A32D2D',text:'You are paying $'+Math.round(overBm)+' per line above the current market benchmark — roughly $'+Math.round(overBm*lines).toLocaleString()+' per month more than comparable businesses'});
+  if(!isNaN(monthsLeft)&&monthsLeft<=4)findings.push({color:'#0F6E56',text:'Your contract ends in approximately '+Math.round(monthsLeft)+' months — now is the right time to review your options before it auto-renews'});
+  if(orphans>0)findings.push({color:'#D85A30',text:'You have lines on separate contracts with different end dates — this limits your flexibility and makes it harder to negotiate as a single account'});
+  if(!isNaN(overages)&&overages>50)findings.push({color:'#D85A30',text:'Your bill shows $'+Math.round(overages)+' in data overages — your current data plan may not be the right fit for your team\'s usage'});
+  if(state.data==='individual'&&lines>10)findings.push({color:'#BA7517',text:'Your data is not shared across lines — a pooled data plan would likely reduce waste and lower your overall bill'});
+  if(!isNaN(devSubsidy)&&devSubsidy>0&&devSubsidy<200)findings.push({color:'#D85A30',text:'The device subsidy on your account is below what most businesses receive on a comparable term'});
+  if(roamPenalty)findings.push({color:'#D85A30',text:'Your roaming charges exceed the threshold for your travel frequency — a travel add-on or coverage upgrade would likely save money'});
+  if(!isNaN(roamCharges)&&roamCharges>0&&state.travelpass==='no')findings.push({color:'#BA7517',text:'You have roaming charges but no Travel Pass — adding one could significantly reduce these costs'});
+  if(!isNaN(roamCharges)&&roamCharges>0&&(roamFreq==='regular'||roamFreq==='frequent')&&state.tier==='canada')findings.push({color:'#BA7517',text:'Your team travels regularly but your plan is Canada-only — a Can-US or international plan may be more cost-effective than paying roaming charges'});
+
+  var fp=document.getElementById('findings-panel');
+  if(findings.length>0){
+    fp.style.display='block';
+    document.getElementById('findings-list').innerHTML=findings.map(function(f){return'<div class="finding-row"><span style="color:'+f.color+';font-size:16px;flex-shrink:0;">●</span><span>'+f.text+'</span></div>';}).join('');
+  } else fp.style.display='none';
+
+  var carrier=document.getElementById('carrier').value;
+  var cc=carrierContacts(carrier);
+  document.getElementById('carrier-contacts').innerHTML=carrier?('<div class="carrier-card"><div class="carrier-card-name">'+carrier+'</div><div class="carrier-card-info">📞 '+cc.biz+'<br>🌐 <a href="https://'+cc.web+'" target="_blank">'+cc.web+'</a><br><em style="color:#999;">'+cc.note+'</em></div></div>'):'<div style="font-size:13px;color:var(--text3);">Select your current carrier above to see contact details.</div>';
+}
+
+function submitGTM(){
+  var carriers=Array.from(document.getElementById('carrier-pills').querySelectorAll('.pill.sel')).map(function(p){return p.textContent.trim();});
+  if(carriers.length===0){alert('Please select at least one carrier you\'d like to hear from.');return;}
+  alert('Thank you! Your preferences have been noted. A representative from your selected carrier(s) will be in touch based on your contact preferences.');
+}
+</script>
+</body>
+</html>
