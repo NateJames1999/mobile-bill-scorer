@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{width:1200px;height:630px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a18;}
+
+  .canvas{width:1200px;height:630px;background:#1a1a18;position:relative;display:flex;align-items:stretch;}
+
+  /* LEFT PANEL */
+  .left{width:560px;flex-shrink:0;padding:64px 56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;z-index:2;}
+
+  /* MBS LOGO */
+  .mbs-logo{display:flex;align-items:flex-end;gap:14px;margin-bottom:48px;}
+  .mbs-mark{display:flex;flex-direction:column;align-items:center;}
+  .mbs-box{background:#1a1a18;border:2px solid rgba(255,255,255,0.2);border-radius:5px;padding:7px 13px 4px;line-height:1;}
+  .mbs-monogram{font-size:28px;font-weight:800;color:#fff;letter-spacing:0.04em;}
+  .mbs-underline{height:4px;width:100%;background:#0C447C;border-radius:0 0 2px 2px;margin-top:2px;}
+  .mbs-wordmark{padding-bottom:5px;}
+  .mbs-wordmark-name{font-size:18px;font-weight:700;color:#fff;line-height:1.1;}
+  .mbs-wordmark-sub{font-size:10px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:0.16em;text-transform:uppercase;margin-top:3px;}
+
+  /* HEADLINE */
+  .headline{flex:1;display:flex;flex-direction:column;justify-content:center;}
+  .headline h1{font-size:44px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:20px;letter-spacing:-0.01em;}
+  .headline h1 span{color:#0C447C;}
+  .headline p{font-size:18px;color:rgba(255,255,255,0.55);line-height:1.55;max-width:400px;}
+
+  /* BOTTOM ROW */
+  .bottom-row{display:flex;align-items:center;gap:20px;}
+  .tag{font-size:13px;background:rgba(12,68,124,0.35);color:rgba(255,255,255,0.75);padding:6px 14px;border-radius:99px;border:1px solid rgba(12,68,124,0.5);font-weight:500;}
+  .url{font-size:13px;color:rgba(255,255,255,0.3);margin-left:auto;}
+
+  /* RIGHT PANEL — App mockup */
+  .right{flex:1;position:relative;overflow:hidden;}
+  .right-fade{position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(to right,#1a1a18,transparent);z-index:3;}
+  .app-window{position:absolute;top:40px;left:40px;right:-60px;bottom:-60px;background:#f7f7f5;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.5);overflow:hidden;}
+
+  /* APP HEADER */
+  .app-header{background:#1a1a18;padding:18px 20px 16px;text-align:center;}
+  .app-logo{display:inline-flex;align-items:flex-end;gap:9px;}
+  .app-mbs-box{background:#1a1a18;border:1.5px solid rgba(255,255,255,0.2);border-radius:3px;padding:4px 8px 2px;}
+  .app-mbs-text{font-size:15px;font-weight:800;color:#fff;letter-spacing:0.04em;}
+  .app-mbs-line{height:2.5px;background:#0C447C;border-radius:1px;}
+  .app-wordmark-name{font-size:11px;font-weight:700;color:#fff;padding-bottom:3px;}
+  .app-tagline{font-size:10px;color:rgba(255,255,255,0.45);margin-top:4px;}
+
+  /* APP BODY */
+  .app-body{padding:14px 16px;}
+  .bm-badge{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid #ddddd8;border-radius:99px;padding:4px 10px 4px 7px;font-size:9px;color:#999992;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+  .bm-dot{width:6px;height:6px;border-radius:50%;background:#0F6E56;flex-shrink:0;}
+  .bm-badge strong{color:#555550;font-weight:600;}
+
+  .path-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+  .path-card{background:#fff;border:2px solid #ddddd8;border-radius:10px;padding:10px;font-size:9px;}
+  .path-card.active{border-color:#0C447C;background:#e8f0f8;}
+  .path-icon{font-size:14px;margin-bottom:3px;}
+  .path-title{font-size:10px;font-weight:600;color:#1a1a18;margin-bottom:2px;}
+  .path-sub{font-size:8.5px;color:#999992;line-height:1.4;}
+
+  .section-card{background:#fff;border:1px solid #ddddd8;border-radius:10px;margin-bottom:8px;overflow:hidden;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;}
+  .section-left{display:flex;align-items:center;gap:8px;}
+  .section-num{width:20px;height:20px;border-radius:50%;background:#1a1a18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
+  .section-title{font-size:10px;font-weight:600;color:#1a1a18;}
+  .section-sub{font-size:8.5px;color:#999992;margin-top:1px;}
+  .req-badge{font-size:8px;background:#e8f0f8;color:#0C447C;padding:2px 6px;border-radius:99px;margin-left:4px;font-weight:500;}
+
+  /* SCORE PREVIEW */
+  .score-row{display:flex;align-items:center;gap:10px;padding:0 12px 10px;}
+  .score-circle{width:44px;height:44px;border-radius:50%;border:3px solid #0F6E56;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .sc-num{font-size:14px;font-weight:700;color:#0F6E56;line-height:1;}
+  .sc-letter{font-size:10px;font-weight:600;color:#0F6E56;line-height:1;}
+  .score-meta{flex:1;}
+  .score-biz{font-size:10px;font-weight:600;color:#1a1a18;}
+  .score-desc{font-size:8.5px;color:#555550;margin-top:2px;line-height:1.4;}
+  .conf-bg{height:4px;background:#efefec;border-radius:99px;margin-top:6px;}
+  .conf-bar{height:4px;border-radius:99px;background:#0C447C;width:72%;}
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- LEFT: Brand + headline -->
+  <div class="left">
+    <div class="mbs-logo">
+      <div class="mbs-mark">
+        <div class="mbs-box"><span class="mbs-monogram">MBS</span></div>
+        <div class="mbs-underline"></div>
+      </div>
+      <div class="mbs-wordmark">
+        <div class="mbs-wordmark-name">Mobile Bill Score</div>
+        <div class="mbs-wordmark-sub">Business Mobility Audit</div>
+      </div>
+    </div>
+
+    <div class="headline">
+      <h1>Is your business<br>overpaying for<br><span>mobile?</span></h1>
+      <p>Most Canadian businesses pay $15–30 per line above market. Get your free instant grade in 60 seconds.</p>
+    </div>
+
+    <div class="bottom-row">
+      <span class="tag">✓ Free</span>
+      <span class="tag">✓ No login</span>
+      <span class="tag">✓ Instant score</span>
+      <span class="url">mobilebillscore.ca</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: App mockup -->
+  <div class="right">
+    <div class="right-fade"></div>
+    <div class="app-window">
+
+      <div class="app-header">
+        <div class="app-logo">
+          <div class="app-mbs-box">
+            <div class="app-mbs-text">MBS</div>
+            <div class="app-mbs-line"></div>
+          </div>
+          <div>
+            <div class="app-wordmark-name">Mobile Bill Score</div>
+          </div>
+        </div>
+        <div class="app-tagline">Most Canadian businesses overpay $15–30 per line. Find out where you stand.</div>
+      </div>
+
+      <div class="app-body">
+        <div class="bm-badge">
+          <span class="bm-dot"></span>
+          <span>Market benchmarks updated <strong>Jun 2, 2025</strong></span>
+        </div>
+
+        <div class="path-row">
+          <div class="path-card active">
+            <div class="path-icon">⚡</div>
+            <div class="path-title">Quick Check</div>
+            <div class="path-sub">I know roughly what I pay. Takes 60 seconds.</div>
+          </div>
+          <div class="path-card">
+            <div class="path-icon">📄</div>
+            <div class="path-title">Full Audit</div>
+            <div class="path-sub">I have my bill for the most accurate score.</div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-left">
+              <div class="section-num">1</div>
+              <div>
+                <div class="section-title">Business info <span class="req-badge">Required</span></div>
+                <div class="section-sub">Who is this audit for?</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-left">
+              <div class="section-num">2</div>
+              <div>
+                <div class="section-title">Plan basics <span class="req-badge">Required</span></div>
+                <div class="section-sub">Lines, rate and coverage</div>
+              </div>
+            </div>
+          </div>
+          <div class="score-row">
+            <div class="score-circle">
+              <span class="sc-num">78</span>
+              <span class="sc-letter">B</span>
+            </div>
+            <div class="score-meta">
+              <div class="score-biz">Acme Construction Ltd.</div>
+              <div class="score-desc">Your rate is close to the market benchmark — some room to improve before renewal.</div>
+              <div class="conf-bg"><div class="conf-bar"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
